@@ -9,5 +9,113 @@
 		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
 		http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
     <changeSet id="initdb" author="ttomi007">
+        <createTable tableName="Airline">
+            <column name="Id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="Name" type="nvarchar(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="City">
+            <column name="Id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="Name" type="nvarchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Population" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="Flight">
+            <column name="Id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="Airline_id" type="int">
+                <constraints nullable="false"
+                             foreignKeyName="fk_flight_airline"
+                             referencedTableName="Airline"
+                             referencedColumnNames="Id"/>
+            </column>
+            <column name="Start_city_id" type="int">
+                <constraints nullable="false"
+                             foreignKeyName="fk_flight_start_city"
+                             referencedTableName="City"
+                             referencedColumnNames="Id"/>
+            </column>
+            <column name="Arrive_city_id" type="int">
+                <constraints nullable="false"
+                             foreignKeyName="fk_flight_arrive_city"
+                             referencedTableName="City"
+                             referencedColumnNames="Id"/>
+            </column>
+            <column name="Distance" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="Journey_time" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addAutoIncrement
+                columnDataType="int"
+                columnName="Id"
+                startWith="1000"
+                tableName="Airline"/>
+        <addAutoIncrement
+                columnDataType="int"
+                columnName="Id"
+                startWith="1000"
+                tableName="City"/>
+        <addAutoIncrement
+                columnDataType="int"
+                columnName="Id"
+                startWith="1000"
+                tableName="Flight"/>
+    </changeSet>
+    <changeSet id="inittestdata" author="ttomi007">
+        <insert tableName="Airline">
+            <column name="Name">MALÉV</column>
+        </insert>
+        <insert tableName="Airline">
+            <column name="Name">KLM</column>
+        </insert>
+        <insert tableName="Airline">
+            <column name="Name">Air France</column>
+        </insert>
+        <insert tableName="City">
+            <column name="Name">Pozsony</column>
+            <column name="Population">600000</column>
+        </insert>
+        <insert tableName="City">
+            <column name="Name">Tokyo</column>
+            <column name="Population">12000000</column>
+        </insert>
+        <insert tableName="City">
+            <column name="Name">Párizs</column>
+            <column name="Population">4321456</column>
+        </insert>
+        <insert tableName="Flight">
+            <column name="Airline_id">1000</column>
+            <column name="Start_city_id">1000</column>
+            <column name="Arrive_city_id">1002</column>
+            <column name="Distance">1772</column>
+            <column name="Journey_time">200</column>
+        </insert>
+        <insert tableName="Flight">
+            <column name="Airline_id">1000</column>
+            <column name="Start_city_id">1001</column>
+            <column name="Arrive_city_id">1000</column>
+            <column name="Distance">4321</column>
+            <column name="Journey_time">211</column>
+        </insert>
+        <insert tableName="Flight">
+            <column name="Airline_id">1001</column>
+            <column name="Start_city_id">1002</column>
+            <column name="Arrive_city_id">1001</column>
+            <column name="Distance">813</column>
+            <column name="Journey_time">55</column>
+        </insert>
     </changeSet>
 </databaseChangeLog>

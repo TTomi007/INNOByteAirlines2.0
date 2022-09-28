@@ -1,4 +1,4 @@
-package hu.innobyte.Airlines2;
+package hu.innobyte;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
