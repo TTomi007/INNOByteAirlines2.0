@@ -29,10 +29,10 @@ public class Flight {
     private City arriveCity;
 
     @Column(nullable = false)
-    private String distance;
+    private int distance;
 
     @Column(nullable = false)
-    private String journeyTime;
+    private int journeyTime;
 
     public Integer getId() {
         return id;
@@ -66,19 +66,19 @@ public class Flight {
         this.arriveCity = arriveCity;
     }
 
-    public String getDistance() {
+    public int getDistance() {
         return distance;
     }
 
-    public void setDistance(String distance) {
+    public void setDistance(int distance) {
         this.distance = distance;
     }
 
-    public String getJourneyTime() {
+    public int getJourneyTime() {
         return journeyTime;
     }
 
-    public void setJourneyTime(String journeyTime) {
+    public void setJourneyTime(int journeyTime) {
         this.journeyTime = journeyTime;
     }
 

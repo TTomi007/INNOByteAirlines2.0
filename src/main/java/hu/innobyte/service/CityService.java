@@ -25,6 +25,10 @@ public class CityService {
         cityRepository.delete(city);
     }
 
+    public void deleteById(Integer id) {
+        cityRepository.deleteById(id);
+    }
+
     public List<City> findAll() {
         return IterableUtils.toList(cityRepository.findAll());
     }

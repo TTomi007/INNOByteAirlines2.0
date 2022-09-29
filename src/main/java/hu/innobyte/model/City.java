@@ -19,7 +19,7 @@ public class City {
     private String name;
 
     @Column(nullable = false)
-    private String population;
+    private int population;
 
     @OneToMany(mappedBy = "airline")
     private List<Flight> flights;
@@ -40,11 +40,11 @@ public class City {
         this.name = name;
     }
 
-    public String getPopulation() {
+    public int getPopulation() {
         return population;
     }
 
-    public void setPopulation(String population) {
+    public void setPopulation(int population) {
         this.population = population;
     }
 

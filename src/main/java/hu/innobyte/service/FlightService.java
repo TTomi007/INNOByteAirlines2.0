@@ -25,6 +25,10 @@ public class FlightService {
         flightRepository.delete(flight);
     }
 
+    public void deleteById(Integer id) {
+        flightRepository.deleteById(id);
+    }
+
     public List<Flight> findAll() {
         return IterableUtils.toList(flightRepository.findAll());
     }

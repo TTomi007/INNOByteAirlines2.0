@@ -25,6 +25,10 @@ public class AirlineService {
         airlineRepository.delete(airline);
     }
 
+    public void deleteById(Integer id) {
+        airlineRepository.deleteById(id);
+    }
+
     public List<Airline> findAll() {
         return IterableUtils.toList(airlineRepository.findAll());
     }
