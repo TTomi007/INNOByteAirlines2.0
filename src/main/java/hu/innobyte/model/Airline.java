@@ -18,11 +18,8 @@ public class Airline {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "startCity")
-    private List<Flight> startFlights;
-
-    @OneToMany(mappedBy = "arriveCity")
-    private List<Flight> arriveFlights;
+    @OneToMany(mappedBy = "airline")
+    private List<Flight> flights;
 
     public Integer getId() {
         return id;
@@ -40,20 +37,12 @@ public class Airline {
         this.name = name;
     }
 
-    public List<Flight> getStartFlights() {
-        return startFlights;
+    public List<Flight> getFlights() {
+        return flights;
     }
 
-    public void setStartFlights(List<Flight> startFlights) {
-        this.startFlights = startFlights;
-    }
-
-    public List<Flight> getArriveFlights() {
-        return arriveFlights;
-    }
-
-    public void setArriveFlights(List<Flight> arriveFlights) {
-        this.arriveFlights = arriveFlights;
+    public void setFlights(List<Flight> flights) {
+        this.flights = flights;
     }
 
 }

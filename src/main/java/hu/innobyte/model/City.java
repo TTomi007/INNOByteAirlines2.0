@@ -21,8 +21,11 @@ public class City {
     @Column(nullable = false)
     private int population;
 
-    @OneToMany(mappedBy = "airline")
-    private List<Flight> flights;
+    @OneToMany(mappedBy = "startCity")
+    private List<Flight> startCityFlights;
+
+    @OneToMany(mappedBy = "arriveCity")
+    private List<Flight> arriveCityFlights;
 
     public Integer getId() {
         return id;
@@ -46,6 +49,22 @@ public class City {
 
     public void setPopulation(int population) {
         this.population = population;
+    }
+
+    public List<Flight> getStartCityFlights() {
+        return startCityFlights;
+    }
+
+    public void setStartCityFlights(List<Flight> startCityFlights) {
+        this.startCityFlights = startCityFlights;
+    }
+
+    public List<Flight> getArriveCityFlights() {
+        return arriveCityFlights;
+    }
+
+    public void setArriveCityFlights(List<Flight> arriveCityFlights) {
+        this.arriveCityFlights = arriveCityFlights;
     }
 
 }

@@ -1,7 +1,9 @@
 package hu.innobyte.controller;
 
 import hu.innobyte.dto.AirlineDto;
+import hu.innobyte.dto.FlightDto;
 import hu.innobyte.mapper.AirlineMapper;
+import hu.innobyte.mapper.FlightMapper;
 import hu.innobyte.model.Airline;
 import hu.innobyte.service.AirlineService;
 import org.mapstruct.factory.Mappers;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 @RestController
 @RequestMapping("/airline")
@@ -23,7 +27,9 @@ public class AirlineController {
 
     private final AirlineService airlineService;
 
-    private final AirlineMapper mapper = Mappers.getMapper(AirlineMapper.class);
+    private final AirlineMapper airlineMapper = Mappers.getMapper(AirlineMapper.class);
+
+    private final FlightMapper flightMapper = Mappers.getMapper(FlightMapper.class);
 
     public AirlineController(AirlineService airlineService) {
         this.airlineService = airlineService;
@@ -32,20 +38,31 @@ public class AirlineController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<AirlineDto> findAll() {
-        return airlineService.findAll().stream().map(mapper::airlineToAirlineDto).toList();
+        return airlineService.findAll().stream().map(airlineMapper::airlineToAirlineDto).toList();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public AirlineDto findById(@PathVariable("id") Integer id) {
-        return mapper.airlineToAirlineDto(airlineService.findById(id).orElse(null));
+        return airlineMapper.airlineToAirlineDto(airlineService.findById(id).orElse(null));
+    }
+
+    @GetMapping(value = "/{id}/flight", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<FlightDto> findFlightById(@PathVariable("id") Integer id) {
+        Optional<Airline> airline = airlineService.findById(id);
+        return airline.map(getFlightDtoListByAirline()).orElse(null);
+    }
+
+    private Function<Airline, List<FlightDto>> getFlightDtoListByAirline() {
+        return airline -> airline.getFlights().stream().map(flightMapper::fligthToFlightDto).toList();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public AirlineDto save(@RequestBody AirlineDto airlineDto) {
-        Airline airline = mapper.airlineDtoToAirline(airlineDto);
-        return mapper.airlineToAirlineDto(airlineService.save(airline));
+        Airline airline = airlineMapper.airlineDtoToAirline(airlineDto);
+        return airlineMapper.airlineToAirlineDto(airlineService.save(airline));
     }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
