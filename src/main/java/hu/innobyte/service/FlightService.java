@@ -37,4 +37,9 @@ public class FlightService {
         return flightRepository.findById(id);
     }
 
+    public List<Flight> findAllByBetweenTwoCities(Integer startCityId, Integer arriveCityId) {
+        List<Integer> cityIdList = List.of(startCityId, arriveCityId);
+        return flightRepository.findByStartCity_IdInAndArriveCity_IdIn(cityIdList, cityIdList);
+    }
+
 }

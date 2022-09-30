@@ -47,17 +47,6 @@ public class AirlineController {
         return airlineMapper.airlineToAirlineDto(airlineService.findById(id).orElse(null));
     }
 
-    @GetMapping(value = "/{id}/flight", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<FlightDto> findFlightById(@PathVariable("id") Integer id) {
-        Optional<Airline> airline = airlineService.findById(id);
-        return airline.map(getFlightDtoListByAirline()).orElse(null);
-    }
-
-    private Function<Airline, List<FlightDto>> getFlightDtoListByAirline() {
-        return airline -> airline.getFlights().stream().map(flightMapper::fligthToFlightDto).toList();
-    }
-
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public AirlineDto save(@RequestBody AirlineDto airlineDto) {
@@ -69,6 +58,17 @@ public class AirlineController {
     @ResponseBody
     public void delete(@PathVariable("id") Integer id) {
         airlineService.deleteById(id);
+    }
+
+    @GetMapping(value = "/{id}/flight", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<FlightDto> findAllFlightById(@PathVariable("id") Integer id) {
+        Optional<Airline> airline = airlineService.findById(id);
+        return airline.map(getFlightDtoListByAirline()).orElse(null);
+    }
+
+    private Function<Airline, List<FlightDto>> getFlightDtoListByAirline() {
+        return airline -> airline.getFlights().stream().map(flightMapper::fligthToFlightDto).toList();
     }
 
 }
