@@ -55,7 +55,7 @@ public class FlightController {
         flightService.deleteById(id);
     }
 
-    @GetMapping(value = "/way")
+    @GetMapping(value = "/way", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<FlightDto> findAllByBetweenTwoCities(
             @RequestParam Integer startCityId, @RequestParam Integer arriveCityId) {

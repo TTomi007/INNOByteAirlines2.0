@@ -21,6 +21,10 @@ public class CityService {
         return cityRepository.save(city);
     }
 
+    public List<City> saveAll(List<City> cities) {
+        return IterableUtils.toList(cityRepository.saveAll(cities));
+    }
+
     public void delete(City city) {
         cityRepository.delete(city);
     }

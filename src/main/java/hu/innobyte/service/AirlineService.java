@@ -21,6 +21,10 @@ public class AirlineService {
         return airlineRepository.save(airline);
     }
 
+    public List<Airline> saveAll(List<Airline> airlines) {
+        return IterableUtils.toList(airlineRepository.saveAll(airlines));
+    }
+
     public void delete(Airline airline) {
         airlineRepository.delete(airline);
     }
