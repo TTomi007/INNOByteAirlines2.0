@@ -3,9 +3,9 @@ package hu.innobyte.controller;
 import hu.innobyte.dto.AirlineDto;
 import hu.innobyte.dto.FlightDto;
 import hu.innobyte.mapper.AirlineMapper;
-import hu.innobyte.mapper.FlightMapper;
 import hu.innobyte.model.Airline;
 import hu.innobyte.service.AirlineService;
+import hu.innobyte.service.UtilService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 
 @RestController
 @RequestMapping("/airline")
@@ -27,12 +25,13 @@ public class AirlineController {
 
     private final AirlineService airlineService;
 
+    private final UtilService utilService;
+
     private final AirlineMapper airlineMapper = Mappers.getMapper(AirlineMapper.class);
 
-    private final FlightMapper flightMapper = Mappers.getMapper(FlightMapper.class);
-
-    public AirlineController(AirlineService airlineService) {
+    public AirlineController(AirlineService airlineService, UtilService utilService) {
         this.airlineService = airlineService;
+        this.utilService = utilService;
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -63,12 +62,7 @@ public class AirlineController {
     @GetMapping(value = "/{id}/flight", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<FlightDto> findAllFlightById(@PathVariable("id") Integer id) {
-        Optional<Airline> airline = airlineService.findById(id);
-        return airline.map(getFlightDtoListByAirline()).orElse(null);
-    }
-
-    private Function<Airline, List<FlightDto>> getFlightDtoListByAirline() {
-        return airline -> airline.getFlights().stream().map(flightMapper::fligthToFlightDto).toList();
+        return utilService.mapperFlightListToFlightDtoList(utilService.findAllFlightByAirlineId(id));
     }
 
 }

@@ -41,4 +41,16 @@ public class CityService {
         return cityRepository.findById(id);
     }
 
+    public City findMinPopulationCity() {
+        return cityRepository.findFirstByOrderByPopulationAsc();
+    }
+
+    public City findMaxPopulationCity() {
+        return cityRepository.findFirstByOrderByPopulationDesc();
+    }
+
+    public long countCity() {
+        return cityRepository.count();
+    }
+
 }
