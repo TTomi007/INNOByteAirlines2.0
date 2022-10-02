@@ -29,7 +29,7 @@ public record AirlineDto(
         }
 
         public AirlineDto create() {
-            return new AirlineDto(id, name);
+            return new AirlineDto(this);
         }
 
     }

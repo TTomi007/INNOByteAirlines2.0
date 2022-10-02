@@ -60,7 +60,7 @@ public record FlightDto(
         }
 
         public FlightDto create() {
-            return new FlightDto(id, airline, startCity, arriveCity, distance, journeyTime);
+            return new FlightDto(this);
         }
 
     }

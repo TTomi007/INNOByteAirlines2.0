@@ -34,7 +34,7 @@ public record CityDto(
         }
 
         public CityDto create() {
-            return new CityDto(id, name, population);
+            return new CityDto(this);
         }
 
     }
