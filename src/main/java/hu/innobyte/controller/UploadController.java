@@ -68,15 +68,15 @@ public class UploadController {
         flightService.saveAll(flights);
     }
 
-    private static Airline getCurrentAirline(List<Airline> airlines, Flight flight) {
+    private Airline getCurrentAirline(List<Airline> airlines, Flight flight) {
         return airlines.stream().filter(airline -> flight.getAirline().equals(airline)).findFirst().orElse(null);
     }
 
-    private static City getCurrentStartCity(List<City> cities, Flight flight) {
+    private City getCurrentStartCity(List<City> cities, Flight flight) {
         return cities.stream().filter(city -> flight.getStartCity().equals(city)).findFirst().orElse(null);
     }
 
-    private static City getCurrentArriveCity(List<City> cities, Flight flight) {
+    private City getCurrentArriveCity(List<City> cities, Flight flight) {
         return cities.stream().filter(city -> flight.getArriveCity().equals(city)).findFirst().orElse(null);
     }
 

@@ -5,7 +5,9 @@ import hu.innobyte.mapper.FlightMapper;
 import hu.innobyte.model.Flight;
 import hu.innobyte.service.FlightService;
 import org.mapstruct.factory.Mappers;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,8 +53,15 @@ public class FlightController {
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public void delete(@PathVariable("id") Integer id) {
-        flightService.deleteById(id);
+    public ResponseEntity<String> delete(@PathVariable("id") Integer id) {
+        try {
+            flightService.deleteById(id);
+            return ResponseEntity.ok().body("Success delete");
+        } catch (DataIntegrityViolationException de) {
+            return ResponseEntity.badRequest().body("Unsuccessful delete, because other data reference this");
+        } catch (RuntimeException re) {
+            return ResponseEntity.badRequest().body("Unsuccessful delete, because: " + re.getMessage());
+        }
     }
 
     @GetMapping(value = "/way", produces = MediaType.APPLICATION_JSON_VALUE)
