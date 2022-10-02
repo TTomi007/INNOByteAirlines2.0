@@ -58,12 +58,35 @@ public class UtilService {
         dist[startCity.getId()-1000] = 0; //city id started 1000
         List<Flight> originalFlight = new ArrayList<>(flights);
         while (!flights.isEmpty()) {
-            actualCityId = extractMinDistance(flights, visitedCityIds, actualCityId, startCity.getId());
+            actualCityId = extractMinDistance(flights, originalFlight, visitedCityIds, actualCityId, startCity.getId());
             result = setNeighbourCityDistance(flights, originalFlight, dist, previous, toFlightId, actualCityId, arrCity.getId());
             visitedCityIds.add(actualCityId);
         }
 
         return result;
+    }
+
+    private int extractMinDistance(List<Flight> flights, List<Flight> originalFlight, List<Integer> visitedCityIds,
+                                   int actualCityId, int startCityId) {
+        if (actualCityId == - 1) {
+            return startCityId;
+        }
+        List<Flight> neighbourCityFlightList = getNeighbourCityFlightStream(flights, actualCityId).toList();
+        flights.removeAll(neighbourCityFlightList);
+        int nextMinDisctanceCityId = originalFlight.stream()
+                .filter(flight -> visitedCityIds.contains(flight.getStartCity().getId()) // flight from vistedCity
+                        && !visitedCityIds.contains(flight.getArriveCity().getId()))  // not flight to vistedCity
+                .min(Comparator.comparing(Flight::getDistance))
+                .map(flight -> flight.getArriveCity().getId()).orElse(-1);
+        if (nextMinDisctanceCityId == -1) { // not flight from visitedCities to neighbours
+            flights.clear();
+        }
+        return nextMinDisctanceCityId;
+    }
+
+    private Stream<Flight> getNeighbourCityFlightStream(List<Flight> flights, int actualCityId) {
+        return flights.stream()
+                .filter(flight -> flight.getStartCity().getId().equals(actualCityId));
     }
 
     private List<Flight> setNeighbourCityDistance(List<Flight> flights,
@@ -102,24 +125,6 @@ public class UtilService {
         return originalFlight.stream()
                 .filter(flight -> flight.getId() == toFlightId[actualCityId - 1000])
                 .findFirst().orElse(null);
-    }
-
-    private int extractMinDistance(List<Flight> flights, List<Integer> visitedCityIds,
-                                   int actualCityId, int startCityId) {
-        if (actualCityId == - 1) {
-            return startCityId;
-        }
-        List<Flight> neighbourCityFlightList = getNeighbourCityFlightStream(flights, actualCityId).toList();
-        flights.removeAll(neighbourCityFlightList);
-        return neighbourCityFlightList.stream()
-                .filter(flight -> !visitedCityIds.contains(flight.getArriveCity().getId()))
-                .min(Comparator.comparing(Flight::getDistance))
-                .map(flight -> flight.getArriveCity().getId()).orElse(-1);
-    }
-
-    private static Stream<Flight> getNeighbourCityFlightStream(List<Flight> flights, int actualCityId) {
-        return flights.stream()
-                .filter(flight -> flight.getStartCity().getId().equals(actualCityId));
     }
 
 }
