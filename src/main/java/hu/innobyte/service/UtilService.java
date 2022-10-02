@@ -5,14 +5,16 @@ import hu.innobyte.mapper.FlightMapper;
 import hu.innobyte.model.Airline;
 import hu.innobyte.model.City;
 import hu.innobyte.model.Flight;
+import hu.innobyte.util.Node;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Service
@@ -46,29 +48,23 @@ public class UtilService {
         City startCity = cityService.findMinPopulationCity();
         City arrCity = cityService.findMaxPopulationCity();
         int cityCount = (int)cityService.countCity();
-        int[] dist = new int[cityCount];
-        int[] previous = new int[cityCount];
-        int[] toFlightId = new int[cityCount];
-        IntStream.range(0, cityCount).forEach(i -> {
-            dist[i] = Integer.MAX_VALUE;
-            previous[i] = -1; //undefinied
-            toFlightId[i] = -1; //undefinied
-        });
-        int actualCityId = -1;
-        dist[startCity.getId()-1000] = 0; //city id started 1000
+        Node[] nodes = new Node[cityCount];
+        Arrays.setAll(nodes, node -> new Node());
+        Integer actualCityId = null;
+        nodes[startCity.getId()-1000].setDist(0); //city id started 1000
         List<Flight> originalFlight = new ArrayList<>(flights);
         while (!flights.isEmpty()) {
             actualCityId = extractMinDistance(flights, originalFlight, visitedCityIds, actualCityId, startCity.getId());
-            result = setNeighbourCityDistance(flights, originalFlight, dist, previous, toFlightId, actualCityId, arrCity.getId());
+            result = setNeighbourCityDistance(flights, originalFlight, nodes, actualCityId, arrCity.getId());
             visitedCityIds.add(actualCityId);
         }
 
         return result;
     }
 
-    private int extractMinDistance(List<Flight> flights, List<Flight> originalFlight, List<Integer> visitedCityIds,
-                                   int actualCityId, int startCityId) {
-        if (actualCityId == - 1) {
+    private Integer extractMinDistance(List<Flight> flights, List<Flight> originalFlight, List<Integer> visitedCityIds,
+                                   Integer actualCityId, Integer startCityId) {
+        if (actualCityId == null) {
             return startCityId;
         }
         List<Flight> neighbourCityFlightList = getNeighbourCityFlightStream(flights, actualCityId).toList();
@@ -84,36 +80,32 @@ public class UtilService {
         return nextMinDisctanceCityId;
     }
 
-    private Stream<Flight> getNeighbourCityFlightStream(List<Flight> flights, int actualCityId) {
-        return flights.stream()
-                .filter(flight -> flight.getStartCity().getId().equals(actualCityId));
+    private Stream<Flight> getNeighbourCityFlightStream(List<Flight> flights, Integer actualCityId) {
+        return flights.stream().filter(flight -> flight.getStartCity().getId().equals(actualCityId));
     }
 
     private List<Flight> setNeighbourCityDistance(List<Flight> flights,
                                                   List<Flight> originalFlight,
-                                                  int[] dist, int[] previous, int[] toFlightId,
-                                                  int actualCityId,
-                                                  int arriveCityId) {
-        if (actualCityId != arriveCityId) {
+                                                  Node[] nodes,
+                                                  Integer actualCityId,
+                                                  Integer arriveCityId) {
+        if (!Objects.equals(actualCityId, arriveCityId)) {
             Stream<Flight> neighbourCityFlightStream = getNeighbourCityFlightStream(flights, actualCityId); //neighbour of actualCityId
-            neighbourCityFlightStream
-                    .forEach(flight -> {
-                        int alt = dist[actualCityId - 1000] + flight.getDistance();
-                        Integer nextCityId = flight.getArriveCity().getId();
-                        if (alt < dist[nextCityId - 1000]) {
-                            dist[nextCityId - 1000] = alt;
-                            previous[nextCityId - 1000] = actualCityId;
-                            toFlightId[nextCityId - 1000] = flight.getId();
-                        }
-                    });
+            neighbourCityFlightStream.forEach(flight -> {
+                int alt = nodes[actualCityId - 1000].getDist() + flight.getDistance();
+                Integer nextCityId = flight.getArriveCity().getId();
+                Node actualNode = nodes[nextCityId - 1000];
+                if (alt < actualNode.getDist()) {
+                    actualNode.setValues(alt, actualCityId, flight.getId());
+                }
+            });
             return null;
         } else {
             List<Flight> result = new ArrayList<>();
-            int resultActualCityId = actualCityId;
-            while (previous[resultActualCityId-1000] != -1) {
-                result.add(
-                        getFlight(originalFlight, toFlightId, resultActualCityId));
-                resultActualCityId = previous[resultActualCityId-1000];
+            Integer resultActualCityId = actualCityId;
+            while (nodes[resultActualCityId-1000].getPrevious() != null) { // check is startCity
+                result.add(getFlight(originalFlight, nodes, resultActualCityId));
+                resultActualCityId = nodes[resultActualCityId-1000].getPrevious();
             }
             flights.clear();
             Collections.reverse(result);
@@ -121,9 +113,9 @@ public class UtilService {
         }
     }
 
-    private Flight getFlight(List<Flight> originalFlight, int[] toFlightId, int actualCityId) {
+    private Flight getFlight(List<Flight> originalFlight, Node[] nodes, int actualCityId) {
         return originalFlight.stream()
-                .filter(flight -> flight.getId() == toFlightId[actualCityId - 1000])
+                .filter(flight -> Objects.equals(flight.getId(), nodes[actualCityId - 1000].getToFlightId()))
                 .findFirst().orElse(null);
     }
 
