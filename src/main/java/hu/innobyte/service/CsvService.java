@@ -1,10 +1,8 @@
 package hu.innobyte.service;
 
-import hu.innobyte.dto.AirlineDtoBuilder;
+import hu.innobyte.dto.AirlineDto;
 import hu.innobyte.dto.CityDto;
-import hu.innobyte.dto.CityDtoBuilder;
 import hu.innobyte.dto.FlightDto;
-import hu.innobyte.dto.FlightDtoBuilder;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -34,20 +32,20 @@ public class CsvService {
     }
 
     private CityDto mapToCityDto(String[] values) {
-        return CityDtoBuilder.aCityDto()
-                .withName(values[0])
-                .withPopulation(Integer.parseInt(values[1]))
-                .build();
+        return CityDto.builder()
+                .name(values[0])
+                .population(Integer.parseInt(values[1]))
+                .create();
     }
 
     private FlightDto mapToFlightDto(String[] values) {
-        return FlightDtoBuilder.aFlightDto()
-                .withAirline(AirlineDtoBuilder.anAirlineDto().withName(values[0]).build())
-                .withStartCity(CityDtoBuilder.aCityDto().withName(values[1]).build())
-                .withArriveCity(CityDtoBuilder.aCityDto().withName(values[2]).build())
-                .withDistance(Integer.parseInt(values[3]))
-                .withJourneyTime(Integer.parseInt(values[4]))
-                .build();
+        return FlightDto.builder()
+                .airline(AirlineDto.builder().name(values[0]).create())
+                .startCity(CityDto.builder().name(values[1]).create())
+                .arriveCity(CityDto.builder().name(values[2]).create())
+                .distance(Integer.parseInt(values[3]))
+                .journeyTime(Integer.parseInt(values[4]))
+                .create();
     }
 
 }
