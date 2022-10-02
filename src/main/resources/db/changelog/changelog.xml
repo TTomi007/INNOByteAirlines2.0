@@ -85,8 +85,8 @@
             <column name="Name">Air France</column>
         </insert>
         <insert tableName="City">
-            <column name="Name">Pozsony</column>
-            <column name="Population">600000</column>
+            <column name="Name">Bécs</column>
+            <column name="Population">1900000</column>
         </insert>
         <insert tableName="City">
             <column name="Name">Tokyo</column>
